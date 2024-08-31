@@ -1,0 +1,13 @@
+@tailwind base;
+
+@layer base {
+    body {
+        @apply font-roboto;
+        @apply min-h-screen;
+        @apply bg-slate-200;
+    }
+}
+
+@tailwind components;
+
+@tailwind utilities;

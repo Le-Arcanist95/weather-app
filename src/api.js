@@ -6,8 +6,9 @@ export const geoApiOptions = {
     },
 }
 
+const openWeatherAPI_BaseUrl = 'https://api.openweathermap.org/data/2.5'
 const openWeatherAPI_Key = '79dec38c8997bd3da414a2dd79ea4246'
 
 export const openWeatherVarUrl = (lat, lon, units) => {
-    return `https://api.openweathermap.org/data/2.5/weather?lat={${lat}}&lon={${lon}}&appid={${openWeatherAPI_Key}}&units=${units}`
+    return `${openWeatherAPI_BaseUrl}/weather?lat={${lat}}&lon={${lon}}&appid={${openWeatherAPI_Key}}&units=${units}`
 }

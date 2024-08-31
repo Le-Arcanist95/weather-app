@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Select from 'react-select'
 
 import { CurrentWeather } from './components/CurrentWeather'
@@ -6,7 +6,11 @@ import { Search } from './components/Search'
 import { openWeatherVarUrl } from './api'
 
 export const App = () => {
-    const [unitType, setUnitType] = useState('standard')
+    const [urlData, setUrlData] = useState({
+        latitude: '',
+        longitude: '',
+        unitType: 'standard',
+    })
     const [weatherUrl, setWeatherUrl] = useState('')
 
     const unitTypes = [
@@ -15,26 +19,33 @@ export const App = () => {
         { value: 'metric', label: 'Metric' },
     ]
 
+    useEffect(() => {
+        setWeatherUrl(openWeatherVarUrl(...Object.values(urlData)))
+    }, [urlData])
+
+    // TESTING - REMOVE LATER
+    useEffect(() => {
+        console.log(weatherUrl)
+    }, [weatherUrl])
+
     const handleUnitSwitch = (e) => {
-        const unit = e.value
-        switch (unit) {
-            case 'imperial':
-                setUnitType('imperial')
-                break
-            case 'metric':
-                setUnitType('metric')
-                break
-            default:
-                setUnitType('standard')
-                break
-        }
+        setUrlData((prevData) => ({
+            ...prevData,
+            unitType: e.value,
+        }))
     }
 
-    const handleOnSearchChange = (searchData) => {
+    const handleOnSearchChange = async (searchData) => {
         const [latitude, longitude] = searchData.value.split(' ')
-    }
 
-    // const currentWeather = axios.get(openWeatherVarUrl())
+        setUrlData((prevData) => ({
+            ...prevData,
+            latitude,
+            longitude,
+        }))
+
+        
+    }
 
     return (
         <div className="mx-auto my-5 max-w-5xl">
@@ -45,10 +56,11 @@ export const App = () => {
                 Unit Measurements:
                 <Select
                     className="ml-2"
-                    value={unitType}
+                    value={urlData.unitType}
                     options={unitTypes}
                     placeholder={
-                        unitType.charAt(0).toUpperCase() + unitType.slice(1)
+                        urlData.unitType.charAt(0).toUpperCase() +
+                        urlData.unitType.slice(1)
                     }
                     onChange={handleUnitSwitch}
                 />

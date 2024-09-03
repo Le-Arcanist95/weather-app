@@ -1,51 +1,47 @@
-import { useEffect, useState } from 'react'
-import Select from 'react-select'
+import { useState } from 'react';
+import Select from 'react-select';
 
-import { CurrentWeather } from './components/CurrentWeather'
-import { Search } from './components/Search'
-import { openWeatherVarUrl } from './api'
+import { CurrentWeather } from './components/CurrentWeather';
+import { Search } from './components/Search';
+import { openWeatherFetch } from './api';
 
 export const App = () => {
-    const [urlData, setUrlData] = useState({
-        latitude: '',
-        longitude: '',
-        unitType: 'standard',
-    })
-    const [weatherUrl, setWeatherUrl] = useState('')
-
+    // Static Data
     const unitTypes = [
         { value: 'standard', label: 'Standard' },
         { value: 'imperial', label: 'Imperial' },
         { value: 'metric', label: 'Metric' },
-    ]
+    ];
 
-    useEffect(() => {
-        setWeatherUrl(openWeatherVarUrl(...Object.values(urlData)))
-    }, [urlData])
+    // Controlled State Data
+    const [unitType, setUnitType] = useState('standard');
+    const [weatherData, setWeatherData] = useState({});
 
-    // TESTING - REMOVE LATER
-    useEffect(() => {
-        console.log(weatherUrl)
-    }, [weatherUrl])
-
+    // Functionality
     const handleUnitSwitch = (e) => {
-        setUrlData((prevData) => ({
-            ...prevData,
-            unitType: e.value,
-        }))
-    }
+        setUnitType(e.value);
+    };
 
-    const handleOnSearchChange = async (searchData) => {
-        const [latitude, longitude] = searchData.value.split(' ')
+    const handleOnSearchChange = (searchData) => {
+        const [latitude, longitude] = searchData.value.split(' ');
 
-        setUrlData((prevData) => ({
-            ...prevData,
+        const currentWeather = openWeatherFetch(
+            'weather',
             latitude,
             longitude,
-        }))
+            unitType
+        );
+        const forecastWeather = openWeatherFetch(
+            'forecast',
+            latitude,
+            longitude,
+            unitType
+        );
 
-        
-    }
+        Promise.all([currentWeather, forecastWeather]).then(async (res) => {
+            console.log(res);
+        });
+    };
 
     return (
         <div className="mx-auto my-5 max-w-5xl">
@@ -56,11 +52,10 @@ export const App = () => {
                 Unit Measurements:
                 <Select
                     className="ml-2"
-                    value={urlData.unitType}
+                    value={unitType}
                     options={unitTypes}
                     placeholder={
-                        urlData.unitType.charAt(0).toUpperCase() +
-                        urlData.unitType.slice(1)
+                        unitType.charAt(0).toUpperCase() + unitType.slice(1)
                     }
                     onChange={handleUnitSwitch}
                 />
@@ -68,5 +63,5 @@ export const App = () => {
             <Search onSearchChange={handleOnSearchChange} />
             <CurrentWeather />
         </div>
-    )
-}
+    );
+};

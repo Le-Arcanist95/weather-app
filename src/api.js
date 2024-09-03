@@ -8,23 +8,23 @@ export const geoApiOptions = {
     },
 };
 
-const openWeatherAPI_BaseUrl = 'https://api.openweathermap.org/data/2.5';
-const openWeatherAPI_Key = 'db90de68357d1859ccd2b0aefc07ab38';
+export const openWeatherAPI_BaseUrl = 'https://api.openweathermap.org/data/2.5';
+export const openWeatherAPI_Key = 'db90de68357d1859ccd2b0aefc07ab38';
 
 // export const openWeatherVarUrl = (endpoint, lat, lon, units) => {
 //     return `${openWeatherAPI_BaseUrl}/${endpoint}?lat={${lat}}&lon={${lon}}&appid={${openWeatherAPI_Key}}&units=${units}`;
 // };
 
-export const openWeatherFetch = async (endpoint, lat, lon, units) => {
-    axios
-        .get(
-            `${openWeatherAPI_BaseUrl}/${endpoint}?lat=${lat}&lon=${lon}&appid=${openWeatherAPI_Key}&units=${units}`
-        )
-        .then((res) => {
-            console.log(res.data);
-            return res.data;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
+// export const openWeatherFetch = (endpoint, lat, lon, units) => {
+//     axios
+//         .get(
+//             `${openWeatherAPI_BaseUrl}/${endpoint}?lat=${lat}&lon=${lon}&appid=${openWeatherAPI_Key}&units=${units}`
+//         )
+//         .then((res) => {
+//             console.log(res.data);
+//             return res.data;
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+// };

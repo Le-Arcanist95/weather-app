@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Select from 'react-select';
 
 import { CurrentWeather } from './components/CurrentWeather';
 import { Search } from './components/Search';
-import { openWeatherFetch } from './api';
+import { openWeatherAPI_BaseUrl, openWeatherAPI_Key } from './api';
 
 export const App = () => {
     // Static Data
@@ -15,32 +16,39 @@ export const App = () => {
 
     // Controlled State Data
     const [unitType, setUnitType] = useState('standard');
-    const [weatherData, setWeatherData] = useState({});
+    const [weatherData, setWeatherData] = useState(null);
 
     // Functionality
     const handleUnitSwitch = (e) => {
         setUnitType(e.value);
     };
 
+    useEffect(() => {
+        console.log(weatherData);
+    }, [weatherData]);
+
     const handleOnSearchChange = (searchData) => {
         const [latitude, longitude] = searchData.value.split(' ');
 
-        const currentWeather = openWeatherFetch(
-            'weather',
-            latitude,
-            longitude,
-            unitType
+        const currentWeather = axios.get(
+            `${openWeatherAPI_BaseUrl}/weather?lat=${latitude}&lon=${longitude}&appid=${openWeatherAPI_Key}&units=${unitType}`
         );
-        const forecastWeather = openWeatherFetch(
-            'forecast',
-            latitude,
-            longitude,
-            unitType
+        const forecastWeather = axios.get(
+            `${openWeatherAPI_BaseUrl}/forecast?lat=${latitude}&lon=${longitude}&appid=${openWeatherAPI_Key}&units=${unitType}`
         );
 
-        Promise.all([currentWeather, forecastWeather]).then(async (res) => {
-            console.log(res);
-        });
+        Promise.all([currentWeather, forecastWeather])
+            .then(async (res) => {
+                const currentRes = res[0].data;
+                const forecastRes = res[1].data;
+
+                setWeatherData({
+                    location: searchData.label,
+                    current: currentRes,
+                    forecast: forecastRes,
+                });
+            })
+            .catch((err) => console.log(err));
     };
 
     return (

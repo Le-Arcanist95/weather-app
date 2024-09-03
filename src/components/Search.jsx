@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import axios from 'axios';
 import { geoBaseUrl, geoApiOptions } from '../api';
@@ -12,7 +13,6 @@ export const Search = ({ onSearchChange }) => {
                 `${geoBaseUrl}/cities?minPopulation=100000&namePrefix=${inputValue}`,
                 geoApiOptions
             );
-            console.log(response.data);
 
             return {
                 options: response.data.data.map((city) => {
